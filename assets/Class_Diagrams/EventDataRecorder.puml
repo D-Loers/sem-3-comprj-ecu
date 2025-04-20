@@ -1,0 +1,46 @@
+@startuml EventDataRecorder
+
+class EventDataRecorder{
+- receiver: IReceiver&
+- storage: IStorage& 
+}
+
+class Storage{
+- messageLog: File
++ StorageModule(const int)
++ Write(IMessage &): void
+}
+
+interface IStorage{
++ void Write(IMessage &)
+}
+
+class CanBusTranceiver {
+- canBus: MCP2515
+- formatter: MessageFormatter &
++ CanBusTranceiver()
++ SendMessage(IMessage): bool
++ IsMessageAvailable(void): bool
++ GetMessage(void): std::shared_ptr<IMessage>
+}
+
+class CANMessageFormatter{
++ MessageFormatter()
++ GetFormattedMessage(can_frame &): std::shared_ptr<IMessage>
++ FormatMessage(IMessage &, can_frame &): int
+}
+
+interface IReceiver {
++ IsMessageAvailable(void): bool
++ GetMessage(void): Message
+}
+
+CANBus .u.|> IReceiver
+CANBus -r-* CANMessageFormatter
+
+EventDataRecorder o-- IStorage
+EventDataRecorder o-- IReceiver
+
+Storage .u.|> IStorage
+
+@enduml

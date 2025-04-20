@@ -1,0 +1,45 @@
+@startuml TirePressure
+
+class TirePressure{
+- receiver: IReceiver&
+- transmitter: ITransmitter&
+- pressureSensor: IPressureSensor*
+}
+
+class PressureSensor{
+- inputPin: int
+}
+
+interface IPressureSensor{
++void ReadPressure()
+}
+
+class CANBus {
+- formatter: CANMessageFormatter&
++ CANBus()
+}
+
+class CANMessageFormatter{
++ GetFormattedMessage(void): Message
+}
+
+interface ITransmitter {
++ SendMessage(const Message): void
+}
+
+interface IReceiver {
++ IsMessageAvailable(void): bool
++ GetMessage(void): Message
+}
+
+TirePressure o-- IPressureSensor
+TirePressure o-- IReceiver
+TirePressure o-- ITransmitter
+
+PressureSensor .u.|> IPressureSensor
+
+CANBus .u.|> ITransmitter
+CANBus .u.|> IReceiver
+CANBus -l-* CANMessageFormatter
+
+@enduml

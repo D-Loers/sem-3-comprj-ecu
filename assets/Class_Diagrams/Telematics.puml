@@ -1,0 +1,51 @@
+@startuml Telematics
+
+class CANBus {
+- formatter: CANMessageFormatter&
++ CANBus()
+}
+
+class WebSockets {
+- formatter: SocketMessageFormatter&
++ WebSockets()
+}
+
+class CANMessageFormatter{
++ GetFormattedMessage(void): Message
+}
+
+class SocketMessageFormatter{
++ GetFormattedMessage(void): Message
+}
+
+class Telematics {
+- messageDispatcher: MessageDispatcher
+- internalReceiver: IReceiver&
+- internalTransmitter: ITransmitter&
+- externalReceiver: IReceiver&
+- externalTransmitter: ITransmitter&
++ Telematics()
+}
+
+interface ITransmitter {
++ SendMessage(const Message): void
+}
+
+interface IReceiver {
++ IsMessageAvailable(void): bool
++ GetMessage(void): Message
+}
+
+CANBus .u.|> ITransmitter 
+CANBus .u.|> IReceiver 
+CANBus *-- CANMessageFormatter
+
+WebSockets .u.|> ITransmitter 
+WebSockets .u.|> IReceiver 
+WebSockets *-- SocketMessageFormatter
+
+Telematics o-- IReceiver
+Telematics o-- ITransmitter
+
+
+@enduml

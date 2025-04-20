@@ -1,0 +1,69 @@
+@startuml BodyController
+
+class BodyController{
+- receiver: IReceiver
+- headLights: IHeadlights
+- leftBlinker: IBlinker
+- rightBlinker: IBlinker
+}
+
+class LED{
+- pin: int
+- LEDState: bool
++ TurnOnLed(): void
++ TurnOffLed(): void
++ ToggleLed(): bool
+}
+
+class Headlights{
+- light: LED&
++ Headlights()
+}
+
+class Blinker{
+- rightLight: LED&
+- leftLight: LED&
+- interval: int
+- lastBlink: unsigned long
++ Blinker()
+}
+
+interface IHeadlights{
++ void TurnOn()
++ void TurnOff()
+}
+
+interface IBlinker{
++ void StartBlinking()
++ void StopBlinking()
+}
+
+class CANBus {
+- formatter: CANMessageFormatter&
++ CANBus()
+}
+
+class CANMessageFormatter{
++ GetFormattedMessage(void): Message
+}
+
+
+interface IReceiver {
++ IsMessageAvailable(void): bool
++ GetMessage(void): Message
+}
+
+BodyController o-- IHeadlights 
+BodyController o-- IBlinker 
+BodyController o-- IReceiver
+
+CANBus <|.u. IReceiver
+CANBus *-- CANMessageFormatter
+
+Headlights <|.u. IHeadlights
+Headlights *-- LED 
+
+Blinker <|.u. IBlinker
+Blinker *-- LED : 1..*
+
+@enduml

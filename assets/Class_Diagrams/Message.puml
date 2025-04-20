@@ -1,0 +1,37 @@
+@startuml Message
+
+abstract class Message{
+- messageType: MessageTypes
++ GetType(): MessageTypes
+}
+
+class ThrottleMessage{
+}
+
+class BrakeMessage{
+}
+
+class IndicatorMessage{
+}
+
+class HeadlightMessage{
+}
+
+class EngineTemperatureMessage{
+}
+
+class EngineMessage{
+}
+
+class TirePressureMessage{
+}
+
+ThrottleMessage -u-|> Message
+BrakeMessage -u-|> Message
+IndicatorMessage -u-|> Message
+HeadlightMessage -u-|> Message
+EngineTemperatureMessage -u-|> Message
+EngineMessage -u-|> Message
+TirePressureMessage -u-|> Message
+
+@enduml

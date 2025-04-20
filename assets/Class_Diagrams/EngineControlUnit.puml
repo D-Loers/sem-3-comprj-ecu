@@ -1,0 +1,58 @@
+@startuml EngineControlUnit
+class EngineControlUnit{
+- motor: IMotor&
+- temperatureSensor: ITemperatureSensor&
+- reciever: IReceiver&
+- transmitter: ITransmitter&
+}
+
+class TemperatureSensor{
+- intputPin: int
+}
+
+class Motor{
+- inputPin: int
+- outputPin: int
+}
+
+interface IMotor{
++ void SetSpeed(int targetSpeed)
++ int getSpeed(void)
+}
+
+interface ITemperatureSensor{
++ void GetTemperature()
+}
+
+class CANBus {
+- formatter: CANMessageFormatter&
++ CANBus()
+}
+
+class CANMessageFormatter{
++ GetFormattedMessage(void): Message
+}
+
+interface ITransmitter {
++ SendMessage(const Message): void
+}
+
+interface IReceiver {
++ IsMessageAvailable(void): bool
++ GetMessage(void): Message
+}
+
+EngineControlUnit o-- IMotor
+EngineControlUnit o-- ITemperatureSensor 
+EngineControlUnit o-- ITransmitter
+EngineControlUnit o-- IReceiver
+
+Motor .u.|> IMotor
+
+TemperatureSensor .u.|> ITemperatureSensor
+
+CANBus .u.|> ITransmitter
+CANBus .u.|> IReceiver
+CANBus -l-o CANMessageFormatter
+
+@enduml

@@ -1,0 +1,220 @@
+@startuml CarProjectClassDiagram
+
+class BodyController{
+- receiver: IReceiver
+- headLights: IHeadlights
+- leftBlinker: IBlinker
+- rightBlinker: IBlinker
+}
+
+class LED{
+- pin: int
+- LEDState: bool
++ TurnOnLed(): void
++ TurnOffLed(): void
++ ToggleLed(): bool
+}
+
+class Headlights{
+- light: LED&
++ Headlights()
+}
+
+class Blinker{
+- rightLight: LED&
+- leftLight: LED&
+- interval: int
+- lastBlink: unsigned long
++ Blinker()
+}
+
+interface IHeadlights{
++ void TurnOn()
++ void TurnOff()
+}
+
+interface IBlinker{
++ void StartBlinking()
++ void StopBlinking()
+}
+
+class EngineControlUnit{
+- motor: IMotor&
+- temperatureSensor: ITemperatureSensor&
+- reciever: IReceiver&
+- transmitter: ITransmitter&
+}
+
+class TemperatureSensor{
+- intputPin: int
+}
+
+class Motor{
+- inputPin: int
+- outputPin: int
+}
+
+interface IMotor{
++ void SetSpeed(int targetSpeed)
++ int getSpeed(void)
+}
+
+interface ITemperatureSensor{
++ void GetTemperature()
+}
+
+class Infotainment{
+- receiver: IReceiver&
+- transmitter: ITransmitter&
+- gasPedal: IGasPedal&
+- brake: IBrake&
+- display: IDisplay&
+- headlightButton: IHeadlightButton&
+- indicatorJoyStick: IIndicatorJoystick&
+}
+
+class GasPedal{
+- pin: int
+}
+
+class Brake{
+- pin: int
+}
+
+class Display{
+}
+
+class HeadlightButton{
+- pin: int
+}
+
+class IndicatorJoystick{
+- joystick: Joystick
+}
+
+interface IGasPedal{
++ void GetPedalPosition()
+}
+
+interface IBrake{
++ void GetBrakeState()
+}
+
+interface IDisplay{
++ void Show()
+}
+
+interface IHeadlightButton{
++ void GetState()
+}
+
+interface IIndicatorJoystick{
++ void GetXPosition()
++ void GetYPosition()
+}
+
+class TirePressure{
+- receiver: IReceiver&
+- transmitter: ITransmitter&
+- pressureSensor: IPressureSensor*
+}
+
+class PressureSensor{
+- inputPin: int
+}
+
+interface IPressureSensor{
++void ReadPressure()
+}
+
+class MessageFormatter{
++ GetFormattedMessage(void): Message
+}
+
+interface ITransmitter {
++ SendMessage(const IMessage &): void
+}
+
+class EventDataRecorder{
+- receiver: IReceiver&
+- storage: IStorage& 
+}
+
+class Storage{
+- messageLog: File
+- formatter: MessageFormatter &
++ StorageModule(const int)
++ Write(IMessage &): void
+}
+
+interface IStorage{
++ void Write(IMessage &)
+}
+
+class CanBusTranceiver {
+- canBus: MCP2515
++ CanBusTranceiver()
++ SendMessage(can_frame): bool
++ IsMessageAvailable(void): bool
++ GetMessage(void): can_frame
+}
+
+interface IReceiver {
++ IsMessageAvailable(void): bool
++ GetMessage(void): Message
+}
+
+EventDataRecorder o-- IStorage
+EventDataRecorder o-- IReceiver
+
+Storage .u.|> IStorage
+Storage --|> MessageFormatter
+
+TirePressure o-- IPressureSensor
+TirePressure o-- IReceiver
+TirePressure o-- ITransmitter
+
+PressureSensor .u.|> IPressureSensor
+
+CanBusTranceiver --|> ITransmitter
+CanBusTranceiver --|> IReceiver
+
+
+Infotainment o-- IGasPedal
+Infotainment o-- IBrake
+Infotainment o-- IDisplay
+Infotainment o-- IHeadlightButton
+Infotainment o-- IIndicatorJoystick
+Infotainment o-- ITransmitter
+Infotainment o-- IReceiver
+
+GasPedal .u.|> IGasPedal
+
+Brake .u.|> IBrake
+
+Display .u.|> IDisplay
+
+HeadlightButton .u.|> IHeadlightButton
+
+IndicatorJoystick .u.|> IIndicatorJoystick
+
+EngineControlUnit o-- IMotor
+EngineControlUnit o-- ITemperatureSensor 
+EngineControlUnit o-- ITransmitter
+EngineControlUnit o-- IReceiver
+
+Motor .u.|> IMotor
+
+TemperatureSensor .u.|> ITemperatureSensor
+
+BodyController o-- IHeadlights 
+BodyController o-- IBlinker 
+BodyController o-- IReceiver
+
+Headlights <|.u. IHeadlights
+Headlights *-- LED 
+
+Blinker <|.u. IBlinker
+Blinker *-- LED : 1..*
+
+@enduml
